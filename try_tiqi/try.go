@@ -19,6 +19,9 @@ const (
 )
 
 func main() {
+	a := 100
+	var b int = 200
+
 	fmt.Println(sunday)
 	fmt.Println(saturday)
 
@@ -26,6 +29,8 @@ func main() {
 	for i, x := range number {
 		fmt.Printf("第%d位的值 = %d\n", i, x)
 	}
+
+	println(max(a, b))
 	//resp, error := http.Get("https://api.caiyunapp.com/v2/TAkhjf8d1nlSlspN/121.6544,25.1552/realtime.json ")
 	//if error != nil {
 	//deal with error
@@ -33,4 +38,15 @@ func main() {
 	//}
 	//defer resp.Body.Close()
 	//io.Copy(os.Stdout, resp.Body)
+}
+
+func max(num1, num2 int) int {
+	var result int
+
+	if num1 > num2 {
+		result = num1
+	} else {
+		result = num2
+	}
+	return result
 }
