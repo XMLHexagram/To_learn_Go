@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 const form = `
@@ -54,9 +55,19 @@ func checkError(err error) {
 
 func weatherReport(w http.ResponseWriter, request *http.Request) {
 	var temp weather
-	url := "https://api.caiyunapp.com/v2/TAkhjf8d1nlSlspN/121.6544,25.1552/realtime.json"
+	url := "https://api.caiyunapp.com/v2/gFeEb2Wm2BCnpPGz/120.15,30.28/realtime.json"
 	json.Unmarshal(getJS(url), &temp)
+	timeWeather := time.Unix(temp.ServerTime, 0)
+	fmt.Fprintf(w, "时间:%s\n", timeWeather)
+	fmt.Fprintf(w, "杭州天气:\n")
 	fmt.Fprintln(w, "温度:", temp.Result.Temperature)
+	fmt.Fprintln(w, "气压:", temp.Result.Pres)
+	fmt.Fprintln(w, "相对湿度:", temp.Result.Humidity)
+	fmt.Fprintln(w, "天气现象:", temp.Result.Skycon)
+	fmt.Fprintln(w, "舒适指数:", temp.Result.Comfort.Index, "   自然语言描述:", temp.Result.Comfort.Desc)
+	fmt.Fprintln(w, "PM2.5:", temp.Result.Pm25)
+	fmt.Fprintln(w, "本地降水强度:", temp.Result.Precipitation.Local.Intensity)
+	fmt.Fprintf(w, "\n0.03~0.25 小雨(雪)， 0.25~0.35 中雨(雪)， 0.35~0.48大雨(雪)， >0.48 暴雨(雪)")
 }
 
 func main() {
@@ -71,7 +82,7 @@ type weather struct {
 	Status     string    `json:"status"`
 	Lang       string    `json:"lang"`
 	Unit       string    `json:"unit"`
-	ServerTime int       `json:"server_time"`
+	ServerTime int64     `json:"server_time"`
 	Location   []float64 `json:"location"`
 	APIStatus  string    `json:"api_status"`
 	Tzshift    int       `json:"tzshift"`
