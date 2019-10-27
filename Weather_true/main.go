@@ -41,25 +41,35 @@ func FormServer(w http.ResponseWriter, request *http.Request) {
 
 func getJS(URL string) []byte {
 	res, err := http.Get(URL)
-	checkError(err)
-	data, err := ioutil.ReadAll((res.Body))
-	checkError(err)
-	return data
+	inputFile := "data.txt"
+	if err == nil {
+		checkError(err)
+		data, err := ioutil.ReadAll((res.Body))
+		checkError(err)
+		err = ioutil.WriteFile(inputFile, data, 0644)
+		checkError(err)
+		return data
+	} else {
+		data, err := ioutil.ReadFile(inputFile)
+		checkError(err)
+		return data
+	}
 }
 
 func checkError(err error) {
 	if err != nil {
+		fmt.Println(err)
 		log.Fatalf("Get : %v", err)
 	}
 }
 
 func weatherReport(w http.ResponseWriter, request *http.Request) {
 	var temp weather
-	url := "https://api.caiyunapp.com/v2/gFeEb2Wm2BCnpPGz/120.15,30.28/realtime.json"
+	url := "https://api.caiyunapp.com/v2/gFeEb2Wm2BCnpPGz/120.20,30.27/realtime.json"
 	json.Unmarshal(getJS(url), &temp)
 	timeWeather := time.Unix(temp.ServerTime, 0)
 	fmt.Fprintf(w, "时间:%s\n", timeWeather)
-	fmt.Fprintf(w, "杭州天气:\n")
+	fmt.Fprintf(w, "杭州江干区天气:\n")
 	fmt.Fprintln(w, "温度:", temp.Result.Temperature)
 	fmt.Fprintln(w, "气压:", temp.Result.Pres)
 	fmt.Fprintln(w, "相对湿度:", temp.Result.Humidity)
